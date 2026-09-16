@@ -1,0 +1,27 @@
+STYLE SPHERE DSS — ANALYTICAL VERIFICATION REPORT
+Date: 15 Sep 2026
+
+PASS — Workbook loads and validates numeric inputs.
+PASS — Base case: 100.0% online fill, 0 online lost sales, ₹21.19 lakh monthly total cost, no stores required.
+PASS — High online/store demand propagates into cost and store-stockout economics.
+PASS — Promotion and warehouse-disruption controls propagate into realised demand/capacity.
+PASS — All 32 store-selection combinations solve without data/solver errors.
+PASS — Pooling sensitivity recalculates at 30%, 40% and 50%.
+PASS — Service-target sensitivity is genuine: in promotional stress, raising the target from 90% to 99% increases required fill and total cost while increasing the local-stockout trade-off.
+PASS — Non-binding target behaviour is correct: changing the target in the base case does not change the allocation because actual service is already 100%.
+PASS — Stockout penalty is a genuine optimisation input and changes total cost/trade-off outcomes.
+PASS — Enablement-cost multiplier is a genuine optimisation input and can change store selection.
+PASS — Monte Carlo simulation is deterministic for a fixed seed.
+PASS — Simulation event flags correctly report promotion and disruption events.
+PASS — Simulation includes return-rate uncertainty plus transfer, excess-holding and markdown cost channels.
+PASS — Simulation reports store-level stockout units so stockout probability can be estimated by store.
+PASS — Capacity and non-negative-flow constraints hold across tested configurations.
+
+CRITICAL FIX — A fallback solve for an infeasible service target was incorrectly inheriting a relaxed target-feasibility flag. The model now preserves the original requested target status.
+
+MODELLING CHOICE — Local store protection is modelled as a soft constraint with an explicit stockout penalty. This is necessary because the assignment explicitly requires stockout penalty as a decision input. At the stated ₹420/unit penalty, the model protects local demand unless higher online service requires a trade-off under tight capacity.
+
+PASS — Literal weighted Goal Programming model implemented with deviation variables for service, store protection, cost and excess-inventory goals, while capacity and demand balance remain hard constraints.
+PASS — Literal MINIMAX pooling model implemented by enumerating the 32 binary store policies and minimising the maximum normalised economic-cost/service regret for p = 30%, 40%, 50%.
+SCOPE NOTE — The deterministic excess-inventory goal has no opening-inventory balance in the supplied case data, so its deterministic target is zero and the full excess/markdown calculation is handled in Monte Carlo. This avoids inventing an unsupported inventory input.
+
